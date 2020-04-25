@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using PumoxWebAPI.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace PumoxWebAPI
 {
@@ -27,11 +28,14 @@ namespace PumoxWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<CompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CompanyDB")));
-            //services.AddDbContext<CompanyContext>(opt => opt.UseInMemoryDatabase("Company"));
+            services.AddDbContextPool<CompanyContext>(opt => opt.UseInMemoryDatabase("CompanyDB"));
             services.AddScoped<CompanyContext>();
-            //services.AddSingleton<CompanyContext>();
             services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddAuthentication("BasicAuthentication")
+            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,12 +50,14 @@ namespace PumoxWebAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

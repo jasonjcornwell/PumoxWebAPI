@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,10 +13,13 @@ namespace PumoxWebAPI.Models
         {
             Employees = new HashSet<Employee>();
         }
+
         [Key]
         public long Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Range(1, 2050)]
         public int EstablishmentYear { get; set; }
-        public ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

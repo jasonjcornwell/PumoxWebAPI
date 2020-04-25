@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,12 +18,16 @@ namespace PumoxWebAPI.Models
     {
         [Key]
         public long Id { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public JobTitle JobTitle { get; set; }
+        [Required]
+        public DateTime? DateOfBirth { get; set; }
+        [Required]
+        public JobTitle? JobTitle { get; set; }
 
-        //[ForeignKey("CompanyId")]
-        //public Company Company { get; set; }
+        [ForeignKey("CompanyId")]
+        public virtual Company Company { get; set; }
     }
 }
