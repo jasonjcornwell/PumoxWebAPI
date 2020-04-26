@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PumoxWebAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using PumoxWebAPI.Models;
 
 namespace PumoxWebAPI.Controllers
 {
@@ -39,7 +37,7 @@ namespace PumoxWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
-            return await _context.Companies.Include(c=>c.Employees).ToListAsync();
+            return await _context.Companies.Include(c => c.Employees).ToListAsync();
         }
 
         [Route("Create")]
@@ -58,14 +56,14 @@ namespace PumoxWebAPI.Controllers
         public async Task<ActionResult<object>> SearchCompanies([FromBody] CompanySearchModel search)
         {
             IQueryable<Company> companies = null;
-            if(search.keyword != null)
+            if (search.keyword != null)
             {
                 companies = _context.Companies.Include(c => c.Employees).Where(c => c.Name.Contains(search.keyword)
                 || c.Employees.Any(e => e.FirstName.Contains(search.keyword))
                 || c.Employees.Any(e => e.LastName.Contains(search.keyword))
                 );
             }
-            if(companies.Count() > 0 && search.EmployeeDateOfBirthFrom != null)
+            if (companies.Count() > 0 && search.EmployeeDateOfBirthFrom != null)
             {
                 companies = companies?.Where(c => c.Employees.Any(e => e.DateOfBirth > search.EmployeeDateOfBirthFrom));
             }
